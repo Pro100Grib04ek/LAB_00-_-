@@ -2,19 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#pragma warning(disable:4996)
 #include <locale.h>
+#include <malloc.h>
+#pragma warning(disable:4996)
 
 
-
-// Количество элементов в массивах
+// количество элементов в массивах
 #define NUM_ENTRIES 100
-#define NUM_SUBJECTS 12
+#define NUM_SUBJECTS 5
 
-// Максимальная длина строки
+// максимальная длина строки
 #define MAX_NAME_LENGTH 50
 
-// Структура для хранения данных
+// структура для хранения данных
 typedef struct {
     char first_name[MAX_NAME_LENGTH];
     char last_name[MAX_NAME_LENGTH];
@@ -23,7 +23,7 @@ typedef struct {
     char subjects[NUM_SUBJECTS][MAX_NAME_LENGTH];
 } Person;
 
-// Массивы для случайных имен, фамилий и отчеств
+// массивы для случайных имен, фамилий и отчеств
 const char* first_names[] = {
     "Анна", "Мария", "Елена", "Ольга", "Татьяна", "Наталья", "Ирина", "Светлана", "Екатерина", "Александра",
     "Людмила", "Вера", "Галина", "Лариса", "Валентина", "Нина", "Зинаида", "Маргарита", "Раиса", "Лидия"
@@ -43,14 +43,14 @@ const char* middle_names[] = {
 };
 const int num_middle_names = sizeof(middle_names) / sizeof(middle_names[0]);
 
-// Массив для учебных предметов
+// массив для учебных предметов
 const char* subjects[] = {
     "Высшая математика:лекции", "Физика", "Элективная физическая культура и спорт", "Основы информационной безопасности", "История России", "Философия", "Структуры данных:лекция", "Структуры данных:Лабораторные",
     "Английский язык", "Физика:Лабораторные", "ВВПД", "Высшая математика:практика"
 };
 const int num_subjects = sizeof(subjects) / sizeof(subjects[0]);
 
-// Функция для генерации случайной даты рождения
+// функция для генерации случайной даты рождения
 void generate_birth_date(char* birth_date) {
     int year = 2000 + rand() % 9; // Год от 2000 до 2008
     int month = 1 + rand() % 12; // Месяц от 1 до 12
@@ -59,17 +59,17 @@ void generate_birth_date(char* birth_date) {
     sprintf(birth_date, "%02d.%02d.%04d", day, month, year);
 }
 
-// Функция для заполнения структуры случайными данными
+// функция для заполнения структуры случайными данными
 void generate_person(Person* person) {
-    // Выбор случайного имени, фамилии и отчества
+    // выбор случайного имени, фамилии и отчества
     strncpy(person->first_name, first_names[rand() % num_first_names], MAX_NAME_LENGTH - 1);
     strncpy(person->last_name, last_names[rand() % num_last_names], MAX_NAME_LENGTH - 1);
     strncpy(person->middle_name, middle_names[rand() % num_middle_names], MAX_NAME_LENGTH - 1);
 
-    // Генерация случайной даты рождения
+    // генерация случайной даты рождения
     generate_birth_date(person->birth_date);
 
-    // Выбор случайных учебных предметов
+    // выбор случайных учебных предметов
     for (int i = 0; i < NUM_SUBJECTS; i++) {
         strncpy(person->subjects[i], subjects[rand() % num_subjects], MAX_NAME_LENGTH - 1);
     }
@@ -77,18 +77,31 @@ void generate_person(Person* person) {
 
 
 int main() {
-    srand(time(NULL)); // Инициализация генератора случайных чисел
+    srand(time(NULL)); // инициализация генератора случайных чисел
 
-    // Создание массива структур
-    Person people[NUM_ENTRIES];
+    // запрос количества учащихся
+    int num_people;
+    scanf("%d", &num_people);
+    
+    // создание динамического массива
+    Person* people = (Person*)malloc(num_people * sizeof(Person));
+    
+    // проверка допустимой памяти
+    if (people == NULL) {
+        printf("Ошибка выделения памяти.\n");
+        return 1;
+    }
+    
+ 
+    
 
-    // Заполнение массива структур случайными данными
-    for (int i = 0; i < NUM_ENTRIES; i++) {
+    // заполнение массива структур случайными данными
+    for (int i = 0; i < num_people; i++) {
         generate_person(&people[i]);
     }
 
-    // Вывод данных
-    for (int i = 0; i < NUM_ENTRIES; i++) {
+    // вывод данных
+    for (int i = 0; i < num_people; i++) {
         setlocale(LC_ALL, "Rus");
         printf("Человек %d:\n", i + 1);
         printf("  Имя: %s %s %s\n", people[i].last_name, people[i].first_name, people[i].middle_name);
@@ -101,4 +114,4 @@ int main() {
     }
 
     return 0;
-}// this is test main file
+}
