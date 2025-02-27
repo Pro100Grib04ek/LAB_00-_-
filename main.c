@@ -9,7 +9,9 @@
 
 // количество элементов в массивах
 #define NUM_ENTRIES 100
-#define NUM_SUBJECTS 5
+#define NUM_SUBJECTS 12
+
+
 
 // максимальная длина строки
 #define MAX_NAME_LENGTH 50
@@ -21,6 +23,10 @@ typedef struct {
     char middle_name[MAX_NAME_LENGTH];
     char birth_date[11]; // Формат DD.MM.YYYY
     char subjects[NUM_SUBJECTS][MAX_NAME_LENGTH];
+    char subjects_room[NUM_SUBJECTS][MAX_NAME_LENGTH];
+    char subjects_hours[NUM_SUBJECTS][MAX_NAME_LENGTH];
+    char group[MAX_NAME_LENGTH];
+
 } Person;
 
 // массивы для случайных имен, фамилий и отчеств
@@ -50,6 +56,28 @@ const char* subjects[] = {
 };
 const int num_subjects = sizeof(subjects) / sizeof(subjects[0]);
 
+// количество часов
+const char* subjects_hours[] = {
+    "46", "28", "72", "36", "12", "26", "24", "28",
+    "28", "14", "28", "46"
+};
+const int num_subjects_hours = sizeof(subjects_hours) / sizeof(subjects_hours[0]);
+
+// номер кабинета
+const char* subjects_room[] = {
+    "270", "237", "Политехник", "110", "237", "235", "235", "175",
+    "106", "186", "324", "106"
+};
+const int num_subjects_room = sizeof(subjects_room) / sizeof(subjects_room[0]);
+
+
+// массив для номера группы
+const char* group[] = {
+    "5151004\/40001", "51510001\/40001", "5151001\/40002", "5151001\/40003", "5151003\/40001", "5151003\/40002", "5151003\/40003", "5151004\/40002"
+};
+const int num_group = sizeof(group) / sizeof(group[0]);
+
+
 // функция для генерации случайной даты рождения
 void generate_birth_date(char* birth_date) {
     int year = 2000 + rand() % 9; // Год от 2000 до 2008
@@ -65,6 +93,11 @@ void generate_person(Person* person) {
     strncpy(person->first_name, first_names[rand() % num_first_names], MAX_NAME_LENGTH - 1);
     strncpy(person->last_name, last_names[rand() % num_last_names], MAX_NAME_LENGTH - 1);
     strncpy(person->middle_name, middle_names[rand() % num_middle_names], MAX_NAME_LENGTH - 1);
+    strncpy(person->subjects_hours, subjects_hours[rand() % num_subjects_hours], MAX_NAME_LENGTH - 1);
+    strncpy(person->subjects_room, subjects_room[rand() % num_subjects_room], MAX_NAME_LENGTH - 1);
+    strncpy(person->group, group[rand() % num_group], MAX_NAME_LENGTH - 1);
+
+
 
     // генерация случайной даты рождения
     generate_birth_date(person->birth_date);
@@ -107,9 +140,15 @@ int main() {
         printf("  Имя: %s %s %s\n", people[i].last_name, people[i].first_name, people[i].middle_name);
         printf("  Дата рождения: %s\n", people[i].birth_date);
         printf("  Учебные предметы:\n");
-        for (int j = 0; j < NUM_SUBJECTS; j++) {
+        printf("  Группа: %s\n", people[i].group);
+        for (int j = 0; j < NUM_SUBJECTS - (rand()%6); j++) {
             printf("    - %s\n", people[i].subjects[j]);
+            printf("  Количество часов: %s\n", people[i].subjects_hours);
+            printf("  Номер кабинета: %s\n", people[i].subjects_room);
         }
+        
+        
+        
         printf("\n");
     }
 
