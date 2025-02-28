@@ -11,22 +11,30 @@
 #define NUM_ENTRIES 100
 #define NUM_SUBJECTS 12
 
-
-
 // максимальная длина строки
-#define MAX_NAME_LENGTH 50
+#define MAX_NAME_LENGTH 100
+#define MAX_DISCIPLINE_NAME 30 
 
-// структура для хранения данных
-typedef struct {
-    char first_name[MAX_NAME_LENGTH];
-    char last_name[MAX_NAME_LENGTH];
-    char middle_name[MAX_NAME_LENGTH];
+// Кол-во дисциплин. Должна задаваться пользователем
+#define MAX_DISCIPLINES 20
+
+// Структура для дисциплин
+typedef struct
+{
+    char name[MAX_DISCIPLINE_NAME];
+    char room_lections;
+    char room_labs;
+    char hours;
+    char format[MAX_NAME_LENGTH]; // экзамен, зачет, курсовая
+} subject;
+
+// структура для хранения студентов
+typedef struct
+{
+    char full_name[MAX_NAME_LENGTH];
     char birth_date[11]; // Формат DD.MM.YYYY
-    char subjects[NUM_SUBJECTS][MAX_NAME_LENGTH];
-    char subjects_room[NUM_SUBJECTS][MAX_NAME_LENGTH];
-    char subjects_hours[NUM_SUBJECTS][MAX_NAME_LENGTH];
+    subject subjects[MAX_DISCIPLINES];
     char group[MAX_NAME_LENGTH];
-
 } Person;
 
 // массивы для случайных имен, фамилий и отчеств
@@ -73,13 +81,14 @@ const int num_subjects_room = sizeof(subjects_room) / sizeof(subjects_room[0]);
 
 // массив для номера группы
 const char* group[] = {
-    "5151004\/40001", "51510001\/40001", "5151001\/40002", "5151001\/40003", "5151003\/40001", "5151003\/40002", "5151003\/40003", "5151004\/40002"
+    "5151004/40001", "51510001/40001", "5151001/40002", "5151001/40003", "5151003/40001", "5151003/40002", "5151003/40003", "5151004/40002"
 };
 const int num_group = sizeof(group) / sizeof(group[0]);
 
 
 // функция для генерации случайной даты рождения
-void generate_birth_date(char* birth_date) {
+void generate_birth_date(char* birth_date)
+{
     int year = 2000 + rand() % 9; // Год от 2000 до 2008
     int month = 1 + rand() % 12; // Месяц от 1 до 12
     int day = 1 + rand() % 28;   // День от 1 до 28 (упрощение)
@@ -88,67 +97,67 @@ void generate_birth_date(char* birth_date) {
 }
 
 // функция для заполнения структуры случайными данными
-void generate_person(Person* person) {
+void generate_person(Person* person)
+{
+    char first_name = first_names[rand() % num_first_names];
+    char middle_name = middle_names[rand() % num_middle_names];
+    char last_name = last_names[rand() % num_last_names];
+    char full_name = strcat(first_name, middle_name);
+    full_name = strcat(full_name, last_name);
     // выбор случайного имени, фамилии и отчества
-    strncpy(person->first_name, first_names[rand() % num_first_names], MAX_NAME_LENGTH - 1);
-    strncpy(person->last_name, last_names[rand() % num_last_names], MAX_NAME_LENGTH - 1);
-    strncpy(person->middle_name, middle_names[rand() % num_middle_names], MAX_NAME_LENGTH - 1);
-    strncpy(person->subjects_hours, subjects_hours[rand() % num_subjects_hours], MAX_NAME_LENGTH - 1);
-    strncpy(person->subjects_room, subjects_room[rand() % num_subjects_room], MAX_NAME_LENGTH - 1);
+    strcpy(person->full_name, full_name);
+
     strncpy(person->group, group[rand() % num_group], MAX_NAME_LENGTH - 1);
-
-
 
     // генерация случайной даты рождения
     generate_birth_date(person->birth_date);
 
     // выбор случайных учебных предметов
     for (int i = 0; i < NUM_SUBJECTS; i++) {
-        strncpy(person->subjects[i], subjects[rand() % num_subjects], MAX_NAME_LENGTH - 1);
+        strncpy(person->subjects->hours, subjects_hours[rand() % num_subjects_hours], MAX_NAME_LENGTH - 1);
+        strncpy(person->subjects->room_labs, subjects_room[rand() % num_subjects_room], MAX_NAME_LENGTH - 1);
+        strncpy(person->subjects->room_lections, subjects_room[rand() % num_subjects_room], MAX_NAME_LENGTH - 1);
     }
 }
 
 
-int main() {
+int main()
+{
     srand(time(NULL)); // инициализация генератора случайных чисел
 
     // запрос количества учащихся
     int num_people;
     scanf("%d", &num_people);
-    
+
     // создание динамического массива
     Person* people = (Person*)malloc(num_people * sizeof(Person));
-    
+
     // проверка допустимой памяти
     if (people == NULL) {
         printf("Ошибка выделения памяти.\n");
         return 1;
     }
-    
- 
-    
 
-    // заполнение массива структур случайными данными
+    // заполнение массива структур случайными данными // TODO в отдельную процедуру
     for (int i = 0; i < num_people; i++) {
         generate_person(&people[i]);
     }
 
-    // вывод данных
-    for (int i = 0; i < num_people; i++) {
+    // вывод данных TODO в отдельную процедуру
+    for (int i = 0; i < num_people; i++)
+    {
         setlocale(LC_ALL, "Rus");
         printf("Человек %d:\n", i + 1);
-        printf("  Имя: %s %s %s\n", people[i].last_name, people[i].first_name, people[i].middle_name);
+        printf("  ФИО: %s\n", people[i].full_name);
         printf("  Дата рождения: %s\n", people[i].birth_date);
         printf("  Учебные предметы:\n");
         printf("  Группа: %s\n", people[i].group);
-        for (int j = 0; j < NUM_SUBJECTS - (rand()%6); j++) {
+        for (int j = 0; j < NUM_SUBJECTS - (rand() % 6); j++) {
             printf("    - %s\n", people[i].subjects[j]);
-            printf("  Количество часов: %s\n", people[i].subjects_hours);
-            printf("  Номер кабинета: %s\n", people[i].subjects_room);
+            printf("  Количество часов: %s\n", people[i].subjects[j].hours);
+            printf("  Номер кабинета лекций: %s\n", people[i].subjects[j].room_lections);
+            printf("  Номер кабинета лабораторных: %s\n", people[i].subjects[j].room_labs);
         }
-        
-        
-        
         printf("\n");
     }
 
