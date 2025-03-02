@@ -29,7 +29,6 @@ extern const int num_group; //массив для номера группы
 extern const char* subjects_hours[]; //количество часов
 
 //количество элементов в массивах
-#define NUM_ENTRIES 100
 #define NUM_SUBJECTS 12
 
 //максимальная длина строки
@@ -39,6 +38,7 @@ extern const char* subjects_hours[]; //количество часов
 typedef struct {
     char full_name[MAX_NAME_LENGTH];
     char birth_date[11]; // Формат DD.MM.YYYY
+    short num_subjects;
     char subjects[NUM_SUBJECTS][MAX_NAME_LENGTH];
     char subjects_room[NUM_SUBJECTS][MAX_NAME_LENGTH];
     char subjects_hours[NUM_SUBJECTS][MAX_NAME_LENGTH];
@@ -48,7 +48,7 @@ typedef struct {
 
 
 //функция для генерации случайной даты рождения
-void generate_birth_date(char* birth_date) 
+void generate_birth_date(char* birth_date)
 {
     int year = 2000 + rand() % 9; // Год от 2000 до 2008
     int month = 1 + rand() % 12; // Месяц от 1 до 12
@@ -65,14 +65,14 @@ void generate_birth_date(char* birth_date)
 }
 
 //функция для заполнения структуры случайными данными
-void generate_person(Person* person, int min_disciplines, int max_disciplines) 
+void generate_person(Person* person, int min_disciplines, int max_disciplines)
 {
     //случайный выбор пола
     person->gender = (rand() % 2) ? 'M' : 'F'; // 'M' - мужской, 'F' - женский
     char full_name[MAX_NAME_LENGTH];
 
     //выбор случайного имени, фамилии и отчества в зависимости от пола
-    if (person->gender == 'F') 
+    if (person->gender == 'F')
     {
         strcpy(full_name, last_names_f[rand() % num_last_names_f]);
         strcat(full_name, " ");
@@ -81,7 +81,7 @@ void generate_person(Person* person, int min_disciplines, int max_disciplines)
         strcat(full_name, middle_names_f[rand() % num_middle_names_f]);
         strncpy(person->full_name, full_name, MAX_NAME_LENGTH - 1);
     }
-    else 
+    else
     {
         strcpy(full_name, last_names_m[rand() % num_last_names_m]);
         strcat(full_name, " ");
@@ -97,17 +97,15 @@ void generate_person(Person* person, int min_disciplines, int max_disciplines)
     //выбор случайной группы
     strncpy(person->group, group[rand() % num_group], MAX_NAME_LENGTH - 1);
 
-    //переменная для 
+    //переменная для >_<
     int num_sub = rand() % num_subjects;
 
     //выбор случайных учебных предметов
-    for (int i = 0; i < NUM_SUBJECTS; i++) 
-    {
-        strncpy(person->subjects[i], subjects[rand() % num_subjects], MAX_NAME_LENGTH - 1);
-    }
+    int rand_num_subjects = rand() % (max_disciplines + 1 - min_disciplines) + min_disciplines ; // Случайное число в диапазоне [min_disciplines, max_disciplines]
+    person->num_subjects = rand_num_subjects;
 
     //выбор случайных учебных предметов с привязкой
-    for (int i = 0; i < NUM_SUBJECTS; i++) 
+    for (int i = 0; i < rand_num_subjects; i++)
     {
         int sub_index = rand() % num_subjects;
         strncpy(person->subjects[i], subjects[sub_index], MAX_NAME_LENGTH - 1);
@@ -118,14 +116,14 @@ void generate_person(Person* person, int min_disciplines, int max_disciplines)
 
 void print_students(Person* people, int num_people)
 {
-    for (int i = 0; i < num_people; i++) 
+    for (int i = 0; i < num_people; i++)
     {
         printf("Человек %d:\n", i + 1);
         printf("  Имя: %s\n", people[i].full_name);
         printf("  Дата рождения: %s\n", people[i].birth_date);
         printf("  Группа: %s\n", people[i].group);
         printf("  Учебные предметы:\n");
-        for (int j = 0; j < NUM_SUBJECTS - (rand() % 6); j++) 
+        for (int j = 0; j < people[i].num_subjects; j++)
         {
             printf("    - %s\n", people[i].subjects[j]);
             printf("      Количество часов: %s\n", people[i].subjects_hours[j]);
@@ -144,8 +142,8 @@ int main()
 
     Person* people = (Person*)malloc(0); // Далее память будет выделяться realloc внутри процедуры
     long long mem = 0; // Тут хранится занимаемая память
-    int min_disciplines = 10;
-    int max_disciplines = 20;
+    int min_disciplines = 1;
+    int max_disciplines = 12;
     while (1)
     {
         scanf("%s", &request);
@@ -177,7 +175,7 @@ int main()
         {
             int print_num; // Сколько стундентов вывести
             scanf("%d", &print_num);
-            int num_generated_students = mem/sizeof(people[0]);
+            int num_generated_students = mem / sizeof(people[0]);
             if ((print_num > num_generated_students) || (print_num == -1))
             {
                 print_num = num_generated_students;
