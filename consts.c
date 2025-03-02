@@ -57,7 +57,7 @@ extern const char* subjects_room[] = {
     "270", "237", "Политехник", "110", "237", "235", "235", "175",
     "106", "186", "324", "106"
 };
-extern int num_subjects_room = sizeof(subjects_room) / sizeof(subjects_room[0]);
+extern const int num_subjects_room = sizeof(subjects_room) / sizeof(subjects_room[0]);
 
 //массив для номера группы
 extern const char* group[] = {
