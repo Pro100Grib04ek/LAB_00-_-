@@ -38,10 +38,10 @@ extern const char* subject_format[];
 //структура для дисциплин
 typedef struct
 {
-    char name[MAX_NAME_LENGTH];
-    char room_lec[11]; // < 256
-    char room_lab[11]; // < 256
-    char hours[10]; // < 256
+    char name[43]; // Самое длинное название - 42 символа
+    char room_lec[4]; // < 256
+    char room_lab[4]; // < 256
+    char hours[4]; // < 256
     char format[10]; // Экзамен, зачёт, курсовая
 } Subject;
 
@@ -50,7 +50,7 @@ typedef struct {
     char full_name[MAX_NAME_LENGTH];
     char birth_date[11]; // Формат DD.MM.YYYY
     short num_subjects;
-    Subject subjects[50];
+    Subject subjects[34];
     char group[MAX_NAME_LENGTH];
     char gender;
 } Person;
@@ -110,7 +110,7 @@ void generate_person(Person* person, int min_disciplines, int max_disciplines)
     int num_sub = rand() % num_subjects;
 
     //выбор случайных учебных предметов
-    int rand_num_subjects = rand() % (max_disciplines + 1 - min_disciplines) + min_disciplines ; // Случайное число в диапазоне [min_disciplines, max_disciplines]
+    int rand_num_subjects = rand() % (max_disciplines + 1 - min_disciplines) + min_disciplines; // Случайное число в диапазоне [min_disciplines, max_disciplines]
     person->num_subjects = rand_num_subjects;
 
 
@@ -156,8 +156,8 @@ int main()
 
     Person* people = (Person*)malloc(0); // Далее память будет выделяться realloc внутри процедуры
     long long mem = 0; // Тут хранится занимаемая память
-    int min_disciplines = 1;
-    int max_disciplines = 12;
+    int min_disciplines = 10;
+    int max_disciplines = 20;
     while (1)
     {
         scanf("%s", &request);
@@ -200,6 +200,22 @@ int main()
         {
             free(people);
             mem = 0;
+        }
+        if (!strcmp(request, "min_disciplines"))
+        {
+            scanf("%d", &min_disciplines);
+            if (min_disciplines > num_subjects)
+            {
+                min_disciplines = num_subjects;
+            }
+        }
+        if (!strcmp(request, "max_disciplines"))
+        {
+            scanf("%d", &max_disciplines);
+            if (max_disciplines > num_subjects)
+            {
+                max_disciplines = num_subjects;
+            }
         }
     }
 }
