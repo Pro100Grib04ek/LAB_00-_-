@@ -21,12 +21,8 @@ extern const char* middle_names_m[];
 extern const int num_middle_names_m;
 extern const char* subjects[]; //массив для учебных предметов
 extern const int num_subjects;
-extern const char* subjects_room[]; //номер кабинета
-extern const int num_subjects_room;
 extern const char* group[];
 extern const int num_group; //массив для номера группы
-extern const char* subjects_hours[]; //количество часов
-extern const int num_subjects_hours;
 extern const char* subject_format[];
 
 //количество элементов в массивах
@@ -118,11 +114,10 @@ void generate_person(Person* person, int min_disciplines, int max_disciplines)
     for (int i = 0; i < rand_num_subjects; i++)
     {
         strncpy(person->subjects[i].name, subjects[rand() % num_subjects], MAX_NAME_LENGTH - 1);
-        strncpy(person->subjects[i].room_lec, subjects_room[rand() % num_subjects_room], 10);
-        strncpy(person->subjects[i].room_lab, subjects_room[rand() % num_subjects_room], 10);
+        sprintf(person->subjects[i].room_lec, "%d", (rand() % 256));
+        sprintf(person->subjects[i].room_lab, "%d", (rand() % 256));
+        sprintf(person->subjects[i].hours, "%d", (rand() % 256));
         strncpy(person->subjects[i].format, subject_format[rand() % 3], 11);
-        strncpy(person->subjects[i].hours, subjects_hours[rand() % num_subjects_hours], 10);
-
     }
 }
 

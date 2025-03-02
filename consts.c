@@ -55,23 +55,11 @@ extern const char* subjects[] = {
 };
 extern const int num_subjects = sizeof(subjects) / sizeof(subjects[0]);
 
-//количество часов
-extern const char* subjects_hours[] = { 
-    "12", "14", "24", "26", 
-    "28", "36", "46", "72"
-};
-extern const int num_subjects_hours = sizeof(subjects_hours) / sizeof(subjects_hours[0]);
-
-//номер кабинета
-extern const char* subjects_room[] = {
-    "270", "237", "110", "237", "235", "235", "175",
-    "106", "186", "324", "106"
-};
-extern int num_subjects_room = sizeof(subjects_room) / sizeof(subjects_room[0]);
-
 //массив для номера группы
 extern const char* group[] = {
-    "5151004/40001", "51510001/40001", "5151001/40002", "5151001/40003", "5151003/40001", "5151003/40002", "5151003/40003", "5151004/40002"
+    "5151004/40001", "51510001/40001", "5151001/40002", 
+    "5151001/40003", "5151003/40001", "5151003/40002", 
+    "5151003/40003", "5151004/40002"
 };
 extern const int num_group = sizeof(group) / sizeof(group[0]);
 
