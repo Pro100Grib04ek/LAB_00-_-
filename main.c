@@ -21,12 +21,13 @@ extern const char* middle_names_m[];
 extern const int num_middle_names_m;
 extern const char* subjects[]; //массив для учебных предметов
 extern const int num_subjects;
-extern const int num_subjects_hours;
 extern const char* subjects_room[]; //номер кабинета
 extern const int num_subjects_room;
 extern const char* group[];
 extern const int num_group; //массив для номера группы
 extern const char* subjects_hours[]; //количество часов
+extern const int num_subjects_hours;
+extern const char* subject_format[];
 
 //количество элементов в массивах
 #define NUM_SUBJECTS 12
@@ -34,14 +35,22 @@ extern const char* subjects_hours[]; //количество часов
 //максимальная длина строки
 #define MAX_NAME_LENGTH 100
 
+//структура для дисциплин
+typedef struct
+{
+    char name[MAX_NAME_LENGTH];
+    char room_lec[11]; // < 256
+    char room_lab[11]; // < 256
+    char hours[10]; // < 256
+    char format[10]; // Экзамен, зачёт, курсовая
+} Subject;
+
 //структура для хранения данных
 typedef struct {
     char full_name[MAX_NAME_LENGTH];
     char birth_date[11]; // Формат DD.MM.YYYY
     short num_subjects;
-    char subjects[NUM_SUBJECTS][MAX_NAME_LENGTH];
-    char subjects_room[NUM_SUBJECTS][MAX_NAME_LENGTH];
-    char subjects_hours[NUM_SUBJECTS][MAX_NAME_LENGTH];
+    Subject subjects[50];
     char group[MAX_NAME_LENGTH];
     char gender;
 } Person;
@@ -104,13 +113,16 @@ void generate_person(Person* person, int min_disciplines, int max_disciplines)
     int rand_num_subjects = rand() % (max_disciplines + 1 - min_disciplines) + min_disciplines ; // Случайное число в диапазоне [min_disciplines, max_disciplines]
     person->num_subjects = rand_num_subjects;
 
+
     //выбор случайных учебных предметов с привязкой
     for (int i = 0; i < rand_num_subjects; i++)
     {
-        int sub_index = rand() % num_subjects;
-        strncpy(person->subjects[i], subjects[sub_index], MAX_NAME_LENGTH - 1);
-        strncpy(person->subjects_hours[i], subjects_hours[sub_index], MAX_NAME_LENGTH - 1);
-        strncpy(person->subjects_room[i], subjects_room[sub_index], MAX_NAME_LENGTH - 1);
+        strncpy(person->subjects[i].name, subjects[rand() % num_subjects], MAX_NAME_LENGTH - 1);
+        strncpy(person->subjects[i].room_lec, subjects_room[rand() % num_subjects_room], 10);
+        strncpy(person->subjects[i].room_lab, subjects_room[rand() % num_subjects_room], 10);
+        strncpy(person->subjects[i].format, subject_format[rand() % 3], 11);
+        strncpy(person->subjects[i].hours, subjects_hours[rand() % num_subjects_hours], 10);
+
     }
 }
 
@@ -126,8 +138,10 @@ void print_students(Person* people, int num_people)
         for (int j = 0; j < people[i].num_subjects; j++)
         {
             printf("    - %s\n", people[i].subjects[j]);
-            printf("      Количество часов: %s\n", people[i].subjects_hours[j]);
-            printf("      Номер кабинета: %s\n", people[i].subjects_room[j]);
+            printf("      Количество часов: %s\n", people[i].subjects[j].hours);
+            printf("      Номер кабинета (лекции): %s\n", people[i].subjects[j].room_lec);
+            printf("      Номер кабинета (лабы): %s\n", people[i].subjects[j].room_lab);
+            printf("      Формат аттестации: %s\n", people[i].subjects[j].format);
         }
         printf("\n");
     }
