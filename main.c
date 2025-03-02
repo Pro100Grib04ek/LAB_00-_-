@@ -4,6 +4,7 @@
 #include <time.h>
 #include <locale.h>
 #include <malloc.h>
+
 #pragma warning(disable:4996)
 
 //количество элементов в массивах
@@ -23,7 +24,7 @@ typedef struct {
     char subjects_room[NUM_SUBJECTS][MAX_NAME_LENGTH];
     char subjects_hours[NUM_SUBJECTS][MAX_NAME_LENGTH];
     char group[MAX_NAME_LENGTH];
-    char gender; 
+    char gender;
 } Person;
 
 //массивы для случайных имен, фамилий и отчеств (женские)
@@ -97,13 +98,20 @@ const int num_group = sizeof(group) / sizeof(group[0]);
 void generate_birth_date(char* birth_date) {
     int year = 2000 + rand() % 9; // Год от 2000 до 2008
     int month = 1 + rand() % 12; // Месяц от 1 до 12
-    int day = 1 + rand() % 28;   // День от 1 до 28 (упрощение)
-
+    int day;
+    if (month == 2) // Февраль
+    {
+        day = 1 + rand() % 28;
+    }
+    else
+    {
+        day = 1 + rand() % 30;
+    }
     sprintf(birth_date, "%02d.%02d.%04d", day, month, year);
 }
 
 //функция для заполнения структуры случайными данными
-void generate_person(Person* person) {
+void generate_person(Person* person, int min_disciplines, int max_disciplines) {
     //случайный выбор пола
     person->gender = (rand() % 2) ? 'M' : 'F'; // 'M' - мужской, 'F' - женский
 
@@ -121,21 +129,21 @@ void generate_person(Person* person) {
 
     //генерация случайной даты рождения
     generate_birth_date(person->birth_date);
-    
+
     //выбор случайной группы
     strncpy(person->group, group[rand() % num_group], MAX_NAME_LENGTH - 1);
-    
+
     //переменная для 
     int num_sub = rand() % num_subjects;
-    
+
     //выбор случайных учебных предметов
     for (int i = 0; i < NUM_SUBJECTS; i++) {
         strncpy(person->subjects[i], subjects[rand() % num_subjects], MAX_NAME_LENGTH - 1);
     }
-    
+
     //выбор случайных учебных предметов с привязкой
     for (int i = 0; i < NUM_SUBJECTS; i++) {
-        
+
         int sub_index = rand() % num_subjects;
 
         strncpy(person->subjects[i], subjects[sub_index], MAX_NAME_LENGTH - 1);
@@ -144,9 +152,26 @@ void generate_person(Person* person) {
     }
 }
 
-int main() {
+void print_students(Person* people, int num_people)
+{
+    for (int i = 0; i < num_people; i++) {
+        printf("Человек %d:\n", i + 1);
+        printf("  Имя: %s %s %s\n", people[i].last_name, people[i].first_name, people[i].middle_name);
+        printf("  Дата рождения: %s\n", people[i].birth_date);
+        printf("  Группа: %s\n", people[i].group);
+        printf("  Учебные предметы:\n");
+        for (int j = 0; j < NUM_SUBJECTS - (rand() % 6); j++) {
+            printf("    - %s\n", people[i].subjects[j]);
+            printf("      Количество часов: %s\n", people[i].subjects_hours[j]);
+            printf("      Номер кабинета: %s\n", people[i].subjects_room[j]);
+        }
+        printf("\n");
+    }
+}
+/*
+int main_old() {
     srand(time(NULL));
-    setlocale(LC_ALL, "Rus"); 
+    setlocale(LC_ALL, "Rus");
 
     //запрос количества учащихся
     int num_people;
@@ -163,7 +188,7 @@ int main() {
 
     //заполнение массива структур случайными данными
     for (int i = 0; i < num_people; i++) {
-        generate_person(&people[i]);
+        generate_person(&people[i], 1, 1);
     }
 
     //вывод данных
@@ -185,4 +210,52 @@ int main() {
     free(people);
 
     return 0;
+}
+*/
+
+int main()
+{
+    srand(time(NULL));
+    setlocale(LC_ALL, "Rus");
+
+    char request[16]; // Строка с запросом, 16 - Макс. длина запроса
+
+    Person* people = (Person*)malloc(sizeof(Person)); // Далее память будет выделяться realloc внутри процедуры
+
+    int min_disciplines = 10;
+    int max_disciplines = 20;
+    while (1)
+    {
+        scanf("%s", &request);
+
+        if (!strcmp(request, "gen")) // Отрицание, т.к. strcmp возвращает 0, при совпадениии строк
+        {
+            int gen_num; // Кол-во для генерации
+            scanf("%d", &gen_num);
+            people = realloc(people, sizeof(people) + gen_num * sizeof(Person));
+            if (people == NULL)
+            {
+                printf("Недостаточно памяти!");
+                continue;
+            }
+            for (int i = 0; i < gen_num; i++)
+            {
+                generate_person(&people[i], min_disciplines, max_disciplines);
+            }
+        }
+        if (!strcmp(request, "get_size"))
+        {
+            printf("%d", sizeof(people));
+        }
+        if (!strcmp(request, "print_students"))
+        {
+            int print_num; // Сколько стундентов вывести
+            scanf("%d", &print_num);
+            print_students(people, print_num);
+        }
+        if (!strcmp(request, "clean"))
+        {
+            free(people);
+        }
+    }
 }
