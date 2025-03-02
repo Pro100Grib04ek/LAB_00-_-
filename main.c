@@ -12,13 +12,11 @@
 #define NUM_SUBJECTS 12
 
 //максимальная длина строки
-#define MAX_NAME_LENGTH 50
+#define MAX_NAME_LENGTH 100
 
 //структура для хранения данных
 typedef struct {
-    char first_name[MAX_NAME_LENGTH];
-    char last_name[MAX_NAME_LENGTH];
-    char middle_name[MAX_NAME_LENGTH];
+    char full_name[MAX_NAME_LENGTH];
     char birth_date[11]; // Формат DD.MM.YYYY
     char subjects[NUM_SUBJECTS][MAX_NAME_LENGTH];
     char subjects_room[NUM_SUBJECTS][MAX_NAME_LENGTH];
@@ -114,17 +112,24 @@ void generate_birth_date(char* birth_date) {
 void generate_person(Person* person, int min_disciplines, int max_disciplines) {
     //случайный выбор пола
     person->gender = (rand() % 2) ? 'M' : 'F'; // 'M' - мужской, 'F' - женский
+    char full_name[MAX_NAME_LENGTH];
 
     //выбор случайного имени, фамилии и отчества в зависимости от пола
     if (person->gender == 'F') {
-        strncpy(person->first_name, first_names_f[rand() % num_first_names_f], MAX_NAME_LENGTH - 1);
-        strncpy(person->last_name, last_names_f[rand() % num_last_names_f], MAX_NAME_LENGTH - 1);
-        strncpy(person->middle_name, middle_names_f[rand() % num_middle_names_f], MAX_NAME_LENGTH - 1);
+        strcpy(full_name, last_names_f[rand() % num_last_names_f]);
+        strcat(full_name, " ");
+        strcat(full_name, first_names_f[rand() % num_first_names_f]);
+        strcat(full_name, " ");
+        strcat(full_name, middle_names_f[rand() % num_middle_names_f]);
+        strncpy(person->full_name, full_name, MAX_NAME_LENGTH - 1);
     }
     else {
-        strncpy(person->first_name, first_names_m[rand() % num_first_names_m], MAX_NAME_LENGTH - 1);
-        strncpy(person->last_name, last_names_m[rand() % num_last_names_m], MAX_NAME_LENGTH - 1);
-        strncpy(person->middle_name, middle_names_m[rand() % num_middle_names_m], MAX_NAME_LENGTH - 1);
+        strcpy(full_name, last_names_m[rand() % num_last_names_m]);
+        strcat(full_name, " ");
+        strcat(full_name, first_names_m[rand() % num_first_names_m]);
+        strcat(full_name, " ");
+        strcat(full_name, middle_names_m[rand() % num_middle_names_m]);
+        strncpy(person->full_name, full_name, MAX_NAME_LENGTH - 1);
     }
 
     //генерация случайной даты рождения
@@ -156,7 +161,7 @@ void print_students(Person* people, int num_people)
 {
     for (int i = 0; i < num_people; i++) {
         printf("Человек %d:\n", i + 1);
-        printf("  Имя: %s %s %s\n", people[i].last_name, people[i].first_name, people[i].middle_name);
+        printf("  Имя: %s\n", people[i].full_name);
         printf("  Дата рождения: %s\n", people[i].birth_date);
         printf("  Группа: %s\n", people[i].group);
         printf("  Учебные предметы:\n");
