@@ -206,12 +206,20 @@ int main()
         }
         if (!strcmp(request, "get_size"))
         {
-            printf("%lli\n", mem);
+            printf("%lli B\n", mem);
+            printf("%3.2Lf Kb\n", (double)mem / 1024);
+            printf("%3.2Lf Mb\n", (double)mem / 1024 / 1024);
+            printf("%3.2Lf Gb\n", (double)mem / 1024 / 1024 / 1024);
         }
         if (!strcmp(request, "print_students"))
         {
             int print_num; // Сколько стундентов вывести
             scanf("%d", &print_num);
+            int num_generated_students = mem/sizeof(people[0]);
+            if ((print_num > num_generated_students) || (print_num == -1))
+            {
+                print_num = num_generated_students;
+            }
             print_students(people, print_num);
         }
         if (!strcmp(request, "clean"))
