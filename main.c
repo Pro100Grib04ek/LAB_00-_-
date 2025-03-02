@@ -7,6 +7,27 @@
 
 #pragma warning(disable:4996)
 
+extern const char* first_names_f[]; //массивы для случайных имен, фамилий и отчеств (женские)
+extern const int num_first_names_f;
+extern const char* last_names_f[];
+extern const int num_last_names_f;
+extern const char* middle_names_f[];
+extern const int num_middle_names_f;
+extern const char* first_names_m[]; //массивы для случайных имен, фамилий и отчеств (мужские)
+extern const int num_first_names_m;
+extern const char* last_names_m[];
+extern const int num_last_names_m;
+extern const char* middle_names_m[];
+extern const int num_middle_names_m;
+extern const char* subjects[]; //массив для учебных предметов
+extern const int num_subjects;
+extern const int num_subjects_hours;
+extern const char* subjects_room[]; //номер кабинета
+extern int num_subjects_room;
+extern const char* group[];
+extern const int num_group; //массив для номера группы
+extern const char* subjects_hours[]; //количество часов
+
 //количество элементов в массивах
 #define NUM_ENTRIES 100
 #define NUM_SUBJECTS 12
@@ -25,72 +46,6 @@ typedef struct {
     char gender;
 } Person;
 
-//массивы для случайных имен, фамилий и отчеств (женские)
-const char* first_names_f[] = {
-    "Анна", "Мария", "Елена", "Ольга", "Татьяна", "Наталья", "Ирина", "Светлана", "Екатерина", "Александра",
-    "Людмила", "Вера", "Галина", "Лариса", "Валентина", "Нина", "Зинаида", "Маргарита", "Раиса", "Лидия"
-};
-const int num_first_names_f = sizeof(first_names_f) / sizeof(first_names_f[0]);
-
-const char* last_names_f[] = {
-    "Иванова", "Петрова", "Сидорова", "Смирнова", "Кузнецова", "Васильева", "Попова", "Новикова", "Морозова", "Волкова",
-    "Алексеева", "Лебедева", "Семенова", "Егорова", "Павлова", "Козлова", "Степанова", "Николаева", "Орлова", "Андреева"
-};
-const int num_last_names_f = sizeof(last_names_f) / sizeof(last_names_f[0]);
-
-const char* middle_names_f[] = {
-    "Александровна", "Андреевна", "Борисовна", "Владимировна", "Дмитриевна", "Евгеньевна", "Ивановна", "Константиновна",
-    "Михайловна", "Николаевна", "Павловна", "Сергеевна", "Федоровна", "Юрьевна", "Валентиновна", "Викторовна", "Геннадьевна",
-    "Леонидовна", "Олеговна", "Станиславовна"
-};
-const int num_middle_names_f = sizeof(middle_names_f) / sizeof(middle_names_f[0]);
-
-//массивы для случайных имен, фамилий и отчеств (мужские)
-const char* first_names_m[] = {
-    "Александр", "Дмитрий", "Михаил", "Сергей", "Андрей", "Иван", "Владимир", "Николай", "Алексей", "Евгений",
-    "Павел", "Константин", "Артем", "Игорь", "Виталий", "Олег", "Юрий", "Василий", "Геннадий", "Станислав"
-};
-const int num_first_names_m = sizeof(first_names_m) / sizeof(first_names_m[0]);
-
-const char* last_names_m[] = {
-    "Иванов", "Петров", "Сидоров", "Смирнов", "Кузнецов", "Васильев", "Попов", "Новиков", "Морозов", "Волков",
-    "Алексеев", "Лебедев", "Семенов", "Егоров", "Павлов", "Козлов", "Степанов", "Николаев", "Орлов", "Андреев"
-};
-const int num_last_names_m = sizeof(last_names_m) / sizeof(last_names_m[0]);
-
-const char* middle_names_m[] = {
-    "Александрович", "Дмитриевич", "Михайлович", "Сергеевич", "Андреевич", "Иванович", "Владимирович", "Николаевич",
-    "Алексеевич", "Евгеньевич", "Павлович", "Константинович", "Артемович", "Игоревич", "Витальевич", "Олегович",
-    "Юрьевич", "Васильевич", "Геннадьевич", "Станиславович"
-};
-const int num_middle_names_m = sizeof(middle_names_m) / sizeof(middle_names_m[0]);
-
-//массив для учебных предметов
-const char* subjects[] = {
-    "Высшая математика:лекции", "Физика", "Элективная физическая культура и спорт", "Основы информационной безопасности", "История России", "Философия", "Структуры данных:лекция", "Структуры данных:Лабораторные",
-    "Английский язык", "Физика:Лабораторные", "ВВПД", "Высшая математика:практика"
-};
-const int num_subjects = sizeof(subjects) / sizeof(subjects[0]);
-
-//количество часов
-const char* subjects_hours[] = {
-    "46", "28", "72", "36", "12", "26", "24", "28",
-    "28", "14", "28", "46"
-};
-const int num_subjects_hours = sizeof(subjects_hours) / sizeof(subjects_hours[0]);
-
-//номер кабинета
-const char* subjects_room[] = {
-    "270", "237", "Политехник", "110", "237", "235", "235", "175",
-    "106", "186", "324", "106"
-};
-const int num_subjects_room = sizeof(subjects_room) / sizeof(subjects_room[0]);
-
-//массив для номера группы
-const char* group[] = {
-    "5151004/40001", "51510001/40001", "5151001/40002", "5151001/40003", "5151003/40001", "5151003/40002", "5151003/40003", "5151004/40002"
-};
-const int num_group = sizeof(group) / sizeof(group[0]);
 
 //функция для генерации случайной даты рождения
 void generate_birth_date(char* birth_date) {
@@ -225,8 +180,8 @@ int main()
 
     char request[16]; // Строка с запросом, 16 - Макс. длина запроса
 
-    Person* people = (Person*)malloc(sizeof(Person)); // Далее память будет выделяться realloc внутри процедуры
-
+    Person* people = (Person*)malloc(0); // Далее память будет выделяться realloc внутри процедуры
+    long long mem = 0; // Тут хранится занимаемая память
     int min_disciplines = 10;
     int max_disciplines = 20;
     while (1)
@@ -237,10 +192,11 @@ int main()
         {
             int gen_num; // Кол-во для генерации
             scanf("%d", &gen_num);
-            people = realloc(people, sizeof(people) + gen_num * sizeof(Person));
+            people = realloc(people, gen_num * sizeof(Person));
+            mem += gen_num * sizeof(Person);
             if (people == NULL)
             {
-                printf("Недостаточно памяти!");
+                printf("Недостаточно памяти!\n");
                 continue;
             }
             for (int i = 0; i < gen_num; i++)
@@ -250,7 +206,7 @@ int main()
         }
         if (!strcmp(request, "get_size"))
         {
-            printf("%d", sizeof(people));
+            printf("%lli\n", mem);
         }
         if (!strcmp(request, "print_students"))
         {
@@ -261,6 +217,7 @@ int main()
         if (!strcmp(request, "clean"))
         {
             free(people);
+            mem = 0;
         }
     }
 }
