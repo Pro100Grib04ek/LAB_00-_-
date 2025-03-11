@@ -43,30 +43,53 @@ typedef struct
 
 //структура для хранения данных
 typedef struct {
-    char full_name[MAX_NAME_LENGTH];
-    char birth_date[11]; // Формат DD.MM.YYYY
+    char full_name[MAX_NAME_LENGTH]; // Как 3 указателя
+    int birth_date; // Формат DD.MM.YYYY -> UNIX TIME
     short num_subjects;
     Subject subjects[34];
     char group[MAX_NAME_LENGTH];
     char gender;
 } Person;
 
+#define IsLeapYear(year) ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) 
 
-//функция для генерации случайной даты рождения
-void generate_birth_date(char* birth_date)
+int getTotalDaysInMonth(int month, int year)
 {
-    int year = 2000 + rand() % 9; // Год от 2000 до 2008
-    int month = 1 + rand() % 12; // Месяц от 1 до 12
-    int day;
-    if (month == 2) // Февраль
-    {
-        day = 1 + rand() % 28;
+    int days[] = {
+        31, // Jan
+        28, // Feb
+        31, // Mar
+        30, // Apr
+        31, // May
+        30, // Jun
+        31, // Jul
+        31, // Aug
+        30, // Sep
+        31, // Oct
+        30, // Nov
+        31  // Dec
+    };
+    return (days[month - 1] + (IsLeapYear(year) && month == 2 ? 1 : 0) );
+}
+
+void UnixToTime(int x) {
+    int year = 1970;
+    int day = 1;
+    int month = 1;
+
+    while (x >= 86400) {
+        x -= 86400;
+        day++;
+        if (day > getTotalDaysInMonth(month, year)) {
+            day = 1;
+            month++;
+            if (month > 12) {
+                year++;
+                month = 1;
+            }
+        }
     }
-    else
-    {
-        day = 1 + rand() % 30;
-    }
-    sprintf(birth_date, "%02d.%02d.%04d", day, month, year);
+    printf("%d-%d-%d\n", day, month, year);
 }
 
 //функция для заполнения структуры случайными данными
@@ -97,7 +120,10 @@ void generate_person(Person* person, int min_disciplines, int max_disciplines)
     }
 
     //генерация случайной даты рождения
-    generate_birth_date(person->birth_date);
+    // Даты рождения: 946674000 - 1230757199
+    int min_date = 946674000;
+    int max_date = 1230757199;
+    person->birth_date = (rand() % (max_date + 1 - min_date)) + min_date;
 
     //выбор случайной группы
     strncpy(person->group, group[rand() % num_group], MAX_NAME_LENGTH - 1);
@@ -108,7 +134,6 @@ void generate_person(Person* person, int min_disciplines, int max_disciplines)
     //выбор случайных учебных предметов
     int rand_num_subjects = rand() % (max_disciplines + 1 - min_disciplines) + min_disciplines; // Случайное число в диапазоне [min_disciplines, max_disciplines]
     person->num_subjects = rand_num_subjects;
-
 
     //выбор случайных учебных предметов с привязкой
     for (int i = 0; i < rand_num_subjects; i++)
@@ -127,7 +152,7 @@ void print_students(Person* people, int num_people)
     {
         printf("Человек %d:\n", i + 1);
         printf("  Имя: %s\n", people[i].full_name);
-        printf("  Дата рождения: %s\n", people[i].birth_date);
+        printf("  Дата рождения: "); UnixToTime(people[i].birth_date);
         printf("  Группа: %s\n", people[i].group);
         printf("  Учебные предметы:\n");
         for (int j = 0; j < people[i].num_subjects; j++)
@@ -196,7 +221,7 @@ int main()
             free(people);
             mem = 0;
         }
-        if (!strcmp(request, "min_disciplines"))
+        if (!strcmp(request, "min"))
         {
             scanf("%d", &min_disciplines);
             if (min_disciplines > num_subjects)
@@ -204,7 +229,7 @@ int main()
                 min_disciplines = num_subjects;
             }
         }
-        if (!strcmp(request, "max_disciplines"))
+        if (!strcmp(request, "max"))
         {
             scanf("%d", &max_disciplines);
             if (max_disciplines > num_subjects)
