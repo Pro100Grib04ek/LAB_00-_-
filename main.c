@@ -43,14 +43,14 @@ typedef struct
 
 //структура для хранения данных
 typedef struct {
+    char gender;
     char* first_name;
     char* middle_name;
     char* last_name;
     int birth_date; // Формат DD.MM.YYYY -> UNIX TIME
-    short num_subjects;
-    Subject subjects[1];
+    short num_subjects:5;
+    Subject* subjects;
     char group[MAX_NAME_LENGTH];
-    char gender;
 } Person;
 
 #define IsLeapYear(year) ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) 
