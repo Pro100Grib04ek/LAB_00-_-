@@ -43,10 +43,12 @@ typedef struct
 
 //структура для хранения данных
 typedef struct {
-    char full_name[MAX_NAME_LENGTH]; // Как 3 указателя
+    char* first_name;
+    char* middle_name;
+    char* last_name;
     int birth_date; // Формат DD.MM.YYYY -> UNIX TIME
     short num_subjects;
-    Subject subjects[34];
+    Subject subjects[1];
     char group[MAX_NAME_LENGTH];
     char gender;
 } Person;
@@ -69,7 +71,7 @@ int getTotalDaysInMonth(int month, int year)
         30, // Nov
         31  // Dec
     };
-    return (days[month - 1] + (IsLeapYear(year) && month == 2 ? 1 : 0) );
+    return (days[month - 1] + (IsLeapYear(year) && month == 2 ? 1 : 0));
 }
 
 void UnixToTime(int x) {
@@ -102,21 +104,15 @@ void generate_person(Person* person, int min_disciplines, int max_disciplines)
     //выбор случайного имени, фамилии и отчества в зависимости от пола
     if (person->gender == 'F')
     {
-        strcpy(full_name, last_names_f[rand() % num_last_names_f]);
-        strcat(full_name, " ");
-        strcat(full_name, first_names_f[rand() % num_first_names_f]);
-        strcat(full_name, " ");
-        strcat(full_name, middle_names_f[rand() % num_middle_names_f]);
-        strncpy(person->full_name, full_name, MAX_NAME_LENGTH - 1);
+        person->last_name = last_names_f[rand() % num_last_names_f];
+        person->first_name = first_names_f[rand() % num_first_names_f];
+        person->middle_name = middle_names_f[rand() % num_middle_names_f];
     }
     else
     {
-        strcpy(full_name, last_names_m[rand() % num_last_names_m]);
-        strcat(full_name, " ");
-        strcat(full_name, first_names_m[rand() % num_first_names_m]);
-        strcat(full_name, " ");
-        strcat(full_name, middle_names_m[rand() % num_middle_names_m]);
-        strncpy(person->full_name, full_name, MAX_NAME_LENGTH - 1);
+        person->last_name = last_names_m[rand() % num_last_names_m];
+        person->first_name = first_names_m[rand() % num_first_names_m];
+        person->middle_name = middle_names_m[rand() % num_middle_names_m];
     }
 
     //генерация случайной даты рождения
@@ -151,7 +147,7 @@ void print_students(Person* people, int num_people)
     for (int i = 0; i < num_people; i++)
     {
         printf("Человек %d:\n", i + 1);
-        printf("  Имя: %s\n", people[i].full_name);
+        printf("  Имя: %s %s %s\n", people[i].first_name, people[i].middle_name, people[i].last_name);
         printf("  Дата рождения: "); UnixToTime(people[i].birth_date);
         printf("  Группа: %s\n", people[i].group);
         printf("  Учебные предметы:\n");
@@ -220,6 +216,7 @@ int main()
         {
             free(people);
             mem = 0;
+            Person* people = (Person*)malloc(0); // Чтобы не крашилось при попытке геерации после очистки
         }
         if (!strcmp(request, "min"))
         {
