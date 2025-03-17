@@ -5,9 +5,12 @@
 #include <time.h>
 #include <locale.h>
 #pragma warning(disable:4996)
-#pragma pack(push, 1) // Выравнивание = 1 байт
+
 
 /* ========== Структуры данных ========== */
+
+#pragma pack(push, 1) // Выравнивание = 1 байт
+
 typedef struct {
     const char* name;
     const char* room_lec;
@@ -26,7 +29,6 @@ typedef struct {
     uint8_t gender : 1;  // 0-муж, 1-жен
     uint8_t group_index : 7;  // 0-127 групп
     uint16_t birth_days;  // дни с 01.01.1990 (0-16383)
-    uint8_t flags;  // биты 0-4: кол-во предметов
 } Student;
 
 #pragma pack(pop) // Вернули предыдущую настройку выравнивания
@@ -107,6 +109,8 @@ PackedSubject all_subjects[] = {
     {"Микроконтроллеры", "512", "513", 90, 2}
 };
 
+const int min_sub = 10;
+const int max_sub = 20;
 /* ========== Глобальные настройки ========== */
 #define MAX_GROUPS 128
 #define DAYS_OFFSET 631152000 // UNIX время для 01.01.1990
@@ -117,9 +121,9 @@ uint8_t total_groups = 8;
 /* ========== Функции работы с системой ========== */
 void init_system() {
     for (int i = 0; i < total_groups; i++) {
-        group_cache[i].num_subjects = 12;
-        group_cache[i].subjects = malloc(12 * sizeof(PackedSubject));
-        for (int j = 0; j < 12; j++) {
+        group_cache[i].num_subjects = rand()%(max_sub - min_sub + 1) + min_sub; // Случайное кол-во предметов для группы 10-20
+        group_cache[i].subjects = malloc(group_cache[i].num_subjects * sizeof(PackedSubject));
+        for (int j = 0; j < group_cache[i].num_subjects; j++) {
             group_cache[i].subjects[j] = all_subjects[rand() % 23];
         }
     }
@@ -137,9 +141,7 @@ void generate_student(Student* s) {
     s->name_indexes = (rand() % 20) << 10 | (rand() % 20) << 5 | (rand() % 20);
     s->group_index = rand() % total_groups;
     s->birth_days = (rand() % 6200) + 1;
-
-    StudentGroup* g = &group_cache[s->group_index];
-    s->flags = g->num_subjects;
+    //StudentGroup* g = &group_cache[s->group_index];
 }
 
 const char* get_name(Student* s, int part) {
@@ -197,7 +199,13 @@ int main() {
             count += n;
         }
         else if (strcmp(cmd, "print") == 0) {
-            for (int i = 0; i < count; i++)
+            int print;
+            scanf("%d", &print);
+            if ((print > count) || (print == -1))
+            {
+                print = count;
+            }
+            for (int i = 0; i < print; i++)
                 print_student(&students[i]);
         }
         else if (strcmp(cmd, "mem") == 0) {
