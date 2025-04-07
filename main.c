@@ -111,6 +111,8 @@ PackedSubject all_subjects[] = {
 
 const int min_sub = 10;
 const int max_sub = 20;
+long long total_mem = 0;
+long long mem_reserve = 0;
 /* ========== Глобальные настройки ========== */
 #define MAX_GROUPS 128
 #define DAYS_OFFSET 631152000 // UNIX время для 01.01.1990
@@ -123,6 +125,8 @@ void init_system() {
     for (int i = 0; i < total_groups; i++) {
         group_cache[i].num_subjects = rand()%(max_sub - min_sub + 1) + min_sub; // Случайное кол-во предметов для группы 10-20
         group_cache[i].subjects = malloc(group_cache[i].num_subjects * sizeof(PackedSubject));
+        total_mem += group_cache[i].num_subjects * sizeof(PackedSubject);
+        mem_reserve += group_cache[i].num_subjects * sizeof(PackedSubject);
         for (int j = 0; j < group_cache[i].num_subjects; j++) {
             group_cache[i].subjects[j] = all_subjects[rand() % 23];
         }
@@ -179,7 +183,6 @@ int main() {
 
     Student* students = NULL;
     int count = 0;
-    long long total_mem = 0;
 
     while (1) {
         char cmd[16];
@@ -215,7 +218,7 @@ int main() {
         else if (strcmp(cmd, "clear") == 0) {
             free(students);
             students = NULL;
-            total_mem = 0;
+            total_mem = mem_reserve;
             count = 0;
             /*
             for (int i = 0; i < total_groups; i++) {
